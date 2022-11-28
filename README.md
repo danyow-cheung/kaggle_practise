@@ -7,9 +7,9 @@
 
 ## .csv數據
 
-- 泰坦尼克乘客存活預測
+- [泰坦尼克乘客存活預測](https://github.com/danyow-cheung/kaggle_practise/tree/main/titanic)
 
-- 石油洩漏區域預測
+- [石油洩漏區域預測](https://github.com/danyow-cheung/kaggle_practise/tree/main/oil_split)
 
 
 
