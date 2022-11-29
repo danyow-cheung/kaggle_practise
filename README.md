@@ -1,5 +1,5 @@
 # kaggle_practise
- kaggle上練習代碼
+ kaggle上練習搭建模型代碼
 
 
 > 使用說明
@@ -16,4 +16,4 @@
 
 ## .png圖片數據
 
-- continue
+- [胸部X光肺炎圖像](https://github.com/danyow-cheung/kaggle_practise/tree/main/xray)
