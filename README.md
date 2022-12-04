@@ -20,7 +20,7 @@
 
 - [胸部X光肺炎圖像](https://github.com/danyow-cheung/kaggle_practise/tree/main/xray)
 
-- [速食食物图片分类]((https://github.com/danyow-cheung/kaggle_practise/tree/main/fast food))
+- [速食食物图片分类](https://github.com/danyow-cheung/kaggle_practise/tree/main/fast%20food)
 
 
 
