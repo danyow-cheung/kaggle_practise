@@ -8,7 +8,7 @@
 
 
 
-## .csv數據
+## Predict data(ml)
 
 - [泰坦尼克乘客存活預測](https://github.com/danyow-cheung/kaggle_practise/tree/main/titanic)
 
@@ -16,7 +16,7 @@
 
 
 
-## .png圖片數據
+## Image Classification 
 
 - [胸部X光肺炎圖像](https://github.com/danyow-cheung/kaggle_practise/tree/main/xray)
 
