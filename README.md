@@ -11,8 +11,15 @@
 ## Predict data(ml)
 
 - [泰坦尼克乘客存活預測](https://github.com/danyow-cheung/kaggle_practise/tree/main/titanic)
-
 - [石油洩漏區域預測](https://github.com/danyow-cheung/kaggle_practise/tree/main/oil_split)
+
+
+
+## Predict data(dl)
+
+- 股票预测数据集
+
+  
 
 
 
@@ -22,7 +29,9 @@
 
 - [速食食物图片分类](https://github.com/danyow-cheung/kaggle_practise/tree/main/fast%20food)
 
+- 鞋子图片分类
 
+  
 
 ### 练习目标
 
