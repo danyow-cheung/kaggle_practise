@@ -2,8 +2,9 @@
  kaggle上練習搭建模型代碼
 
 
-> 使用說明
-> 一般都使用jupyter來寫
+> personal profile
+>
+> https://www.kaggle.com/danyowcheung
 
 
 
@@ -17,7 +18,7 @@
 
 ## Predict data(dl)
 
-- 股票预测数据集
+- [股票预测数据集](https://github.com/danyow-cheung/kaggle_practise/tree/main/stock)
 
   
 
@@ -29,7 +30,7 @@
 
 - [速食食物图片分类](https://github.com/danyow-cheung/kaggle_practise/tree/main/fast%20food)
 
-- 鞋子图片分类
+- [鞋子图片分类](https://github.com/danyow-cheung/kaggle_practise/tree/main/shoe)
 
   
 
