@@ -40,7 +40,7 @@
 
 **按照模型出现的先后时间顺序进行学习**
 
-<img src='paper/cnn_history.png'>
+<img src='paper/src/cnn_history.png'>
 
 
 
@@ -49,6 +49,8 @@
   > paper:
   >
   > [Xception: Deep Learning with Depthwise Separable Convolutions](https://arxiv.org/abs/1610.02357)
+
+- AlexNet
 
 - VGG16
 
