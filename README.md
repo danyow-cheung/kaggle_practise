@@ -20,7 +20,7 @@
 
 - [股票预测数据集](https://github.com/danyow-cheung/kaggle_practise/tree/main/stock)
 
-- 手写字体识别
+- [手写字体识别](https://github.com/danyow-cheung/kaggle_practise/tree/main/digits)
 
   
 
