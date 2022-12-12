@@ -20,6 +20,10 @@
 
 - [股票预测数据集](https://github.com/danyow-cheung/kaggle_practise/tree/main/stock)
 
+- 手写字体识别
+
+  
+
   
 
 
@@ -32,7 +36,9 @@
 
 - [鞋子图片分类](https://github.com/danyow-cheung/kaggle_practise/tree/main/shoe)
 
-  
+
+
+
 
 ### 练习目标
 
