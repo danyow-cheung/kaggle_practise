@@ -32,6 +32,14 @@ X ception 和Inception V3有相同的参数
 
 虽然Inception 模块类似于卷积特征提取器，但是Inception凭借经验用更少的参数学习特征
 
+> What is Separable Convolutional Layer
+>
+> <img src= 'https://miro.medium.com/max/1400/1*DfE-E_4TqPKbn-5J9EDHww.webp'>
+>
+> *Separable convolutions consist of first performing a depthwise spatial convolution (which acts on each input channel separately) followed by a pointwise convolution which mixes the resulting output channels.- From Keras Documentation*
+>
+> 
+
 ### The Inception hypothesis 
 
 一层卷积层尝试在3D空间中，使用2个空间维度（宽度和高度）和一个通道维度，因此一个卷积层同时映射**<u>跨通道相关性</u>**和**<u>空间相关性</u>**。
@@ -55,6 +63,34 @@ consists in a depthwise convolution,
 **a spatial convolution performed independently over each channel of an input,followed by a <u>pointwise convolution逐点卷积</u>**
 
 在輸入的每個通道上獨立執行空間卷積，然後是<u>逐點卷積</u>
+
+
+
+## the Xception architecture
+
+提出以下的假说，跨通道相关性和空间相关性的映射在卷积神经网络的特征图中，是可以完全被解耦的。
+
+
+
+xception是一个线性残差连接的深度可分离卷积神经网络。
+
+<img src="../src/xception.png">
+
+
+
+## Experimental evaluation
+
+### training infrastructure
+
+在数据集上，使用具有同步梯度的数据并行性。
+
+
+
+### effect of an intermediate activation after pointwise convolutions
+
+the absence of any non-linearity leads to both faster convergence and better final performance.
+
+非线性的缺席会有更好的效果
 
 
 
