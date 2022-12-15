@@ -50,11 +50,7 @@
 
 
 
-- Xception
-
-  > paper:
-  >
-  > [Xception: Deep Learning with Depthwise Separable Convolutions](https://arxiv.org/abs/1610.02357)
+- [Xception✅](https://github.com/danyow-cheung/kaggle_practise/tree/main/paper/Xception)
 
 - [AlexNet✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/AlexNet/AlexNet.md)
 
