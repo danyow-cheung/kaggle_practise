@@ -51,32 +51,23 @@
 
 
 - [Xception✅](https://github.com/danyow-cheung/kaggle_practise/tree/main/paper/Xception)
-
-- [AlexNet✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/AlexNet/AlexNet.md)
-
-- VGG16
-
+- [AlexNet✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/AlexNet)
+- [VGG16](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/VGG16)
 - VGG19
-
 - ResNet50
-
 - ResNet50v2 
-
 - ResNet101 
-
 - ResNet152 
-
 - ResNet152V2
-
 - InceptionV3
-
 - InceptionResNetV2
-
 - MobileNet
-
 - MobileNet
-
 - ....
+
+
+
+
 
 
 
