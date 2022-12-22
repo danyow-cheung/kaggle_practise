@@ -22,7 +22,7 @@
 
 - [手写字体识别](https://github.com/danyow-cheung/kaggle_practise/tree/main/digits)
 
-- 手語字母識別
+- [手語字母識別](https://github.com/danyow-cheung/kaggle_practise/tree/main/ASL)
 
   >.csv格式識別
 
