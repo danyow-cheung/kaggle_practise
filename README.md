@@ -56,7 +56,7 @@
 - [AlexNet✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/AlexNet)
 - [VGG16✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/VGG16)
 - VGG19
-- ResNet50
+- [ResNet50]((https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/ResNet))
 - ResNet50v2 
 - ResNet101 
 - ResNet152 
