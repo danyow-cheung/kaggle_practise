@@ -61,7 +61,7 @@
 - [VGG16✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/VGG16)
 - VGG19
 - [ResNet50✅]((https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/ResNet))
-- ResNet50v2 
+- [ResNet50v2](((https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/ResNet))
 - ResNet101 
 - ResNet152 
 - ResNet152V2
