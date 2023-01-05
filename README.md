@@ -69,7 +69,7 @@
 - InceptionResNetV2
 - MobileNet
 - MobileNet
-- ....
+- [YOLO](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/YOLO)
 
 
 
