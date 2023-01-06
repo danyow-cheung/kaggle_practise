@@ -6,7 +6,7 @@ we frame object detection <u>**as a regression problem to spatially separated bo
 
 作為空間分離的邊界框和相關概率的回歸問題
 
-
+## 
 
 ## Introduction
 
@@ -33,3 +33,38 @@ systems take a classifier for that object and **evaluate it at various locations
 **we reframe object detection as a single regression problem,straight from pixel to bouding box  coordinates and class probabilities**
 
 我們將目標檢測重新定義為一個單一的回歸問題，直接從像素到邊界框坐標和類別概率
+
+
+
+**<u>YOLO的優點概括為</u>**
+
+1. 檢測速度快
+
+   further more,YOLO achieves more than twice the mean average precision of other real-time systems.
+
+   
+
+2. 感受野大
+
+   YOLO reasons globally about the image when making predictions.YOLO 在進行預測時對圖像進行全局推理
+
+   
+
+   YOLO sees the entire image during training and test time so it implicitly encodes contextual information about the classes as well as their appearance.YOLO 在訓練和測試期間看到整個圖像，因此它隱式編碼有關類別及其外觀的上下文信息
+
+   
+
+3. YOLO learns generalizable representations of objects.YOLO 學習對象的概括表示
+
+   
+
+
+
+
+
+## Unified Detection
+
+> 統一檢測。
+
+我們將目標檢測的獨立組件(separate components)統一到一個神經網絡中。
+
