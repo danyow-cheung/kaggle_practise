@@ -255,3 +255,24 @@ OverFeat 有效地執行滑動窗口檢測，但它仍然是一個不相交的�
 
 MultiGrasp only needs to predict a single graspable region for an image containing one object. It doesn’t have to estimate the size, location, or boundaries of the object or predict it’s class,MultiGrasp只需要預測包含圖像的單個可抓取區域一個對象。 它不必估計大小、位置、或對象的邊界或預測它的類別。
 
+
+
+
+
+## 实现代码
+
+https://www.maskaravivek.com/post/yolov1/
+
+數據集下載
+
+```
+!wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtrainval_06-Nov-2007.tar
+!wget http://host.robots.ox.ac.uk/pascal/VOC/voc2007/VOCtest_06-Nov-2007.tar
+
+!tar xvf VOCtrainval_06-Nov-2007.tar
+!tar xvf VOCtest_06-Nov-2007.tar
+
+!rm VOCtrainval_06-Nov-2007.tar
+!rm VOCtest_06-Nov-2007.tar
+```
+
