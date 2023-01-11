@@ -276,3 +276,7 @@ https://www.maskaravivek.com/post/yolov1/
 !rm VOCtest_06-Nov-2007.tar
 ```
 
+> 使用google colab运行
+
+
+
