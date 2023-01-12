@@ -155,4 +155,207 @@ class BestAnchorBoxFinder(object):
     def _interval_overlap(self,interval_a,interval_b):
         x1,x2 = interval_a
         x3,x4 = interval_b
+        if x3<x1:
+            if x4<x1:
+                return 0 
+            else:
+                return min(x2,x4) - x1 
         
+        else:
+            if x2<x3:
+                return 0 
+            else:
+                return min(x2,x4) - x3 
+    
+    def bbox_iou(self,box1,box2):
+        intersect_w = self._interval_overlap([box1.xmin,box1.xmax],[box2.xmin,box2.xmax])
+        intersect_h = self._interval_overlap([box1.ymin,box1.ymax],[box2.ymin,box2.ymax])
+        intersect = intersect_w*intersect_h
+
+        w1,h1 = box1.xmax - box1.xmin,box1.ymax-box1.ymin
+        w2,h2 = box2.xmax - box2.xmin,box2.ymax - box2.ymin
+
+        union = w1*h1 + w2*h2 - intersect
+        return float(intersect)/union
+    
+    def find(self,center_w,center_h):
+        # find the anchor that best predicts this box 
+        best_anchor = -1 
+        max_iou = -1
+        # each anchor box is specialized to have a certain shape 
+        # eg:flat large rectangle or small square 
+        shifted_box = BoundBox(0,0,center_w,center_h)
+        # for given object,find the best anchor box 
+        for i in range(len(self.anchors)):
+            anchor = self.anchors[i]
+            iou = self.bbox_iou(shifted_box,anchor)
+            if max_iou<iou:
+                best_anchor= i 
+                max_iou = iou
+        return (best_anchor,max_iou)
+    
+
+class BoundBox:
+    def __init__(self,xmin,ymin,xmax,ymax,confidence=None,classes=None) :
+        self.xmin = xmin
+        self.ymin = ymin 
+        self.xmax = xmax
+        self.ymax = ymax
+        # the code below are used during inference
+        # probability
+        self.confidence = confidence
+
+        # class probabilities 
+        self.set_class(classes)
+
+    def set_class(self,classes):
+        self.classes = classes
+        self.label = np.argmax(self.classes)
+
+    def get_label(self):
+        return self.label
+    
+    def get_score(self):
+        return(self.classes[self.label])
+
+'''sample usage of the BESTANCHORBOXFINDER class '''
+# Anchor box width and height found in https://fairyonice.github.io/Part_1_Object_Detection_with_Yolo_for_VOC_2014_data_anchor_box_clustering.html
+_ANCHORS01 = np.array([0.08285376, 0.13705531,
+                       0.20850361, 0.39420716,
+                       0.80552421, 0.77665105,
+                       0.42194719, 0.62385487])
+print(".."*40)
+print("The three example anchor boxes:")
+count = 0
+for i in range(0,len(_ANCHORS01),2):
+    print("anchor box index={}, w={}, h={}".format(count,_ANCHORS01[i],_ANCHORS01[i+1]))
+    count += 1
+print(".."*40)   
+print("Allocate bounding box of various width and height into the three anchor boxes:")  
+babf = BestAnchorBoxFinder(_ANCHORS01)
+for w in range(1,9,2):
+    w /= 10.
+    for h in range(1,9,2):
+        h /= 10.
+        best_anchor,max_iou = babf.find(w,h)
+        print("bounding box (w = {}, h = {}) --> best anchor box index = {}, iou = {:03.2f}".format(
+            w,h,best_anchor,max_iou))
+
+def rescale_centerxy(obj,config):
+    '''
+    Arguments:
+        obj:        dictionary containing xmin,xmax,ymin,ymax
+        config:     dictionary containing IMAGE_W,GRID_W,IMAGE_H and GRID_H
+    
+    '''
+    center_x = 0.5*(obj['xmin'] + obj['xmax'])
+    center_x = center_x/(float(config["IMAGE_W"]) / config['GRID_W'])
+    center_y = 0.5*(obj['ymin'] + obj['ymax'])
+    center_y = center_y/(float(config['IMAGE_H']) / config['GRID_H'])
+    return (center_x,center_y)
+
+def rescale_cebterwh(obj,config):
+    '''
+    Arguments:
+        obj:        dictionary containing xmin,xmax,ymin,ymax
+        config:     dictionary containing IMAGE_W,GRID_W,IMAGE_H and GRID_H
+    '''
+    # unit :grid cell
+    center_w = (obj['xmax'] - obj['xmin'])/(float(config['IMAGE_W'])/config['GRID_W'])
+    # unit :grid cell
+    center_h = (obj['ymax'] - obj['ymin'])/(float(config['IMAGE_H'])/config['GRID_H'])
+    return(center_w,center_h)
+
+'''sample usage'''
+obj    = {'xmin': 150, 'ymin': 84, 'xmax': 300, 'ymax': 294}
+config = {"IMAGE_W":416,"IMAGE_H":416,"GRID_W":13,"GRID_H":13}
+center_x, center_y = rescale_centerxy(obj,config)
+center_w, center_h = rescale_cebterwh(obj,config)
+
+print("cebter_x abd cebter_w should range between 0 and {}".format(config["GRID_W"]))
+print("cebter_y abd cebter_h should range between 0 and {}".format(config["GRID_H"]))
+
+print("center_x = {:06.3f} range between 0 and {}".format(center_x, config["GRID_W"]))
+print("center_y = {:06.3f} range between 0 and {}".format(center_y, config["GRID_H"]))
+print("center_w = {:06.3f} range between 0 and {}".format(center_w, config["GRID_W"]))
+print("center_h = {:06.3f} range between 0 and {}".format(center_h, config["GRID_H"]))
+
+
+'''Define a custon Batch generator to get a batch of 16 images and its corresponding bounding boxes'''
+# from tensorflow.keras.utils import Sequence
+from keras.utils import Sequence
+
+class SimpleBatchGenerator(Sequence):
+    def __init__(self,images,config,norm=None,shuffle=True):
+        '''
+        config : dictionary containing necessary hyper parameters for traning. e.g., 
+            {
+            'IMAGE_H'         : 416, 
+            'IMAGE_W'         : 416,
+            'GRID_H'          : 13,  
+            'GRID_W'          : 13,
+            'LABELS'          : ['aeroplane',  'bicycle', 'bird',  'boat',      'bottle', 
+                                  'bus',        'car',      'cat',  'chair',     'cow',
+                                  'diningtable','dog',    'horse',  'motorbike', 'person',
+                                  'pottedplant','sheep',  'sofa',   'train',   'tvmonitor'],
+            'ANCHORS'         : array([ 1.07709888,   1.78171903,  
+                                        2.71054693,   5.12469308, 
+                                        10.47181473, 10.09646365,  
+                                        5.48531347,   8.11011331]),
+            'BATCH_SIZE'      : 16,
+            'TRUE_BOX_BUFFER' : 50,
+            }
+        
+        '''
+
+        self.config = config
+        self.config['BOX'] = int(len(self.config['ANCHORS'])/2)
+        self.config['CLASS']  = len(self.config['LABELS'])
+        self.images = images
+        self.bestAnchorBoxFinder = BestAnchorBoxFinder(config['ANCHORS'])
+        self.imageReader = ImageReader(config['IMAGE_H'],config['IMAGE_W'],norm=norm)
+        self.shuffle = shuffle
+        if self.shuffle:
+            np.random.shuffle(self.images)
+        
+        def __len__(self):
+            return int(np.ceil(float(len(self.images))/self.config['BATCH_SIZE']))
+        
+        def __getitem___(self,idx):
+            '''
+            Arguments:
+                idx: non-negeative integer value 
+            Returns:
+                x_batch: the numpy array of shape (BATCH_SIZE,IMAGE_H,IMAGE_W,N,channels)
+                        x_batch[iframe,:,:,:] contains a iframeth frame of size  (IMAGE_H,IMAGE_W).
+
+                y_batch: the numpy array of shape (BATCH_SIZE,GRID_H,GRID_W,BOX,4+1+Nclassess)
+                        Box = the number of anchor boxes
+
+                        y_batch[iframe,igird_h,igrid_w,ianchor,:4] contains a (center_x,center_y,center_w,center_h)
+                        of ianchorth anchor at grid cell = (igrid_h,igrid_w) if the object exists in this (grid cell,anchor)
+                        pair,else they simply contain 0 
+
+                        y_batch[iframe,igrid_h,igrid_w,ianchor,5 + iclass] contains 1 if the iclass^th 
+                        class object exists in this (grid cell, anchor) pair, else it contains 0.
+
+                b_batch: the numpy array of shape(BATCH_SIZE,1,1,1,TRUE_BOX_BUFFER,4)
+                        b_batch[iframe,1,1,1,ibuffer,ianchor,:] contains ibufferth object's (center_X,center_y,center_w,center_h) in iframe frame
+                        If ibuffer > N objects in iframeth frame ,then the values are simply 0 
+                        TRUE_BOX_BUFFER has to be some large number, so that the frame with the 
+                        biggest number of objects can also record all objects.
+
+                        The order of the objects do not matter.
+
+                        This is just a hack to easily calculate loss. 
+            '''
+            l_bound = idx*self.config['BATCH_SIZE']
+
+            r_bound =  (idx+1)*self.config['BATCH_SIZE']
+
+            if r_bound>len(self.images):
+                r_bound = len(self.images)
+                l_bound = r_bound - self.config['BATCH_SIZE']
+            instance_count = 0 
+
+            
