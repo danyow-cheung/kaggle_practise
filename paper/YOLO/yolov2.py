@@ -532,9 +532,11 @@ import tensorflow as tf
 def space_to_depth_x2(x):
     return tf.nn.space_to_batch(x,block_size=2)
 
+'''https://fairyonice.github.io/Part_3_Object_Detection_with_Yolo_using_VOC_2012_data_model.html'''
 input_image = Input(shape=(IMAGE_H,IMAGE_W,3))
 true_boxes = Input(shape=(1,1,1,TRUE_BOX_BUFFER,4))
 # layer1 
+
 x = Conv2D(filters=32,kernel_size=3,strides=1)
 x = MaxPooling2D(pool_size=(2,2),strides=2)
 
