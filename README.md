@@ -57,7 +57,12 @@
 ## Predict data(ml)
 
 - [泰坦尼克乘客存活預測](https://github.com/danyow-cheung/kaggle_practise/tree/main/titanic)
+
 - [石油洩漏區域預測](https://github.com/danyow-cheung/kaggle_practise/tree/main/oil_split)
+
+- [泰坦尼克號宇宙飛船](https://github.com/danyow-cheung/kaggle_practise/tree/main/Spaceship-titanic)
+
+  
 
 
 
