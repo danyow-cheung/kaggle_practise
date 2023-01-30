@@ -371,3 +371,50 @@ In addition,batch normalization calculates  activation statistics from 4 differe
 
 2⃣️神經網路被訓練以正常形式檢測修改後的圖像上的對象
 
+
+
+
+
+### YOLOv4
+
+Backbone：CSPDarknet53 
+
+Neck：SPP，PAN
+
+Head：YOLOv3
+
+
+
+>
+>
+>YOLO v4 uses: 
+>
+>- Bag of Freebies (BoF) for backbone: CutMix and Mosaic data augmentation, DropBlock regularization, Class label smoothing 
+>- Bag of Specials (BoS) for backbone: Mish activation, Cross-stage partial connections (CSP), Multiinput weighted residual connections (MiWRC) 
+>-  Bag of Freebies (BoF) for detector: CIoU-loss, CmBN, DropBlock regularization, Mosaic data augmentation, Self-Adversarial Training, Eliminate grid sensitivity, Using multiple anchors for a single ground truth, Cosine annealing scheduler [52], Optimal hyperparameters, Random training shapes 
+>- Bag of Specials (BoS) for detector: Mish activation, SPP-block, SAM-block, PAN path-aggregation block, DIoU-NMS
+
+
+
+
+
+## Experiments
+
+#### Influence of different features on Classifier training
+
+
+
+#### Influence of different features on Detector training
+
+#### Influence of different backbones and pretrained weightings on Detector training 
+
+
+
+
+
+#### Influence of different mini-batch size on Detector training 
+
+we found that after training BoF and BoS training strategies s,the mini-batch has almost no effect on the detector's performance .
+
+
+
