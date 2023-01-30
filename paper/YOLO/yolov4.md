@@ -110,9 +110,69 @@ To sum up,an ordinary object detector is composed of serval parts
 
 ### Bag of freebies
 
+> usually  a convolutional object detector is trained offline.Therefore,researchers always like to take this advantage and <u>develop receive better accuracy without increasing the inference cost</u>使用更好的訓練方法而不增加推理成本
+
+<u>**we can call these methods that only change the training strategy or only increase the training cost as 'bag of freebies'**</u>
+
+這種只改變訓練策略，或者增加訓練成本的方法，稱呼為bag of freebies免費包
+
+
+
+what is often adopted by object detection methods and meets the definition of bag of freebies is data augmentation.
+
+对象检测方法经常采用的并且符合freebies包定义的是数据增强。
+
+
+
+The purpose of data augmentation is to increase the variablity of the input images ,so that the designed object detection model has higher robustness to the images obtained from different enviroments
+
+數據增強的目標是在不同環境下，模型有更高的魯棒性。
+
+photometric distoritions ,geometric distoritions 
+
+常見的數據增強方法有photometric distoritions光度失真 ,geometric distoritions幾何失真
+
+
+
+the data augmentation methods mentioned above are all <u>pixel-wise adjustments</u> .逐像素調整
+
+
+
+>  in addition,some researchers engaged in data augmentation put their emphasis on simulating object occlusion issues.將重點放在模擬對象遮擋的發布者上
+
+>  in addition to above mentioned methods,style transfer GAN is also used for data augmentation,and such usuages can effectively reduce the texture bias learned by CNN甚至用GAN 產生的圖片來訓練CNN
+
+
+
+
+
+Different from the various approaches proposed above,some other bag of freebies methods are dedicated to solving the problem that the semantic distribution in the datase may have bias 
+
+致力解決數據集中語義分佈存在偏差的問題，
+
+ 
+
+In dealing with the problem of semantic distribution bias,a very important issue is that there is a problem of data imbalance between different classessm,and this problem is often solved by hard negative example mining or online hard example mining in two-stage object detector 
+
+不同類之間存在數據不平衡的問題，這一問題通常通過雙通道檢測中的硬否定示例挖掘或在線硬示例挖掘解決。
+
+
+
+。。。。
+
 
 
 ### Bag of specials
+
+for those plugin modules and post-processing methods that **<u>only increase the inference cost by a small amount but can signifficantly improve the accuracy of object detection.</u>**we can call them 'bag of specials'
+
+增加小部分的推理時間，但明顯增加模型精度的預處理方法
+
+
+
+Generally speaking these plugin modules are for enhancing certain attributes in these plugin modules are for enhancing certain attributes in a model ,such as <u>enlarging receptive field,introducing attention mechasim,or strengthening feature intergration catpability</u> 
+
+常見的方法有增大感受嘢，注意力機制等
 
 
 
