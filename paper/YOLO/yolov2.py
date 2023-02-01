@@ -535,41 +535,315 @@ def space_to_depth_x2(x):
 '''https://fairyonice.github.io/Part_3_Object_Detection_with_Yolo_using_VOC_2012_data_model.html'''
 input_image = Input(shape=(IMAGE_H,IMAGE_W,3))
 true_boxes = Input(shape=(1,1,1,TRUE_BOX_BUFFER,4))
-# layer1 
 
+# layer1
 x = Conv2D(filters=32,kernel_size=3,strides=1)
-x = MaxPooling2D(pool_size=(2,2),strides=2)
+x = BatchNormalization(name='norm_1')(x)
+x = LeakyReLU(alpha=0.1)(x)
+x = MaxPooling2D(pool_size=(2,2),strides=2)(x)
 
-x = Conv2D(filters=64,kernel_size=3)
-x = MaxPooling2D(pool_size=(2,2),strides=2)
+# layer2
+x = Conv2D(filters=64,kernel_size=3,strides=1,padding='same',name='conv_2',use_bias=False)(x)
+x = BatchNormalization(name='norm_2')(x)
+x = LeakyReLU(alpha=0.1)(x)
+x = MaxPooling2D(pool_size=(2,2),strides=2)(x)
 
-x = Conv2D(filters=128,kernel_size=3)
-x = Conv2D(filters=64,kernel_size=1)
-x = Conv2D(filters=128,kernel_size=3)
+# layer3
+x = Conv2D(filters=128,kernel_size=3,strides=1,padding='same',name='conv_5',use_bias=False)(x)
+x = BatchNormalization(name='norm_3')(x)
+x = LeakyReLU(alpha=0.1)(x)
 
-x = MaxPooling2D(pool_size=(2,2),strides=2)
+# layer4
+x = Conv2D(filters=64,kernel_size=1,strides=1,padding='same',name='conv_4',use_bias=False)(x)
+x = BatchNormalization(name='norm_4')(x)
+x = LeakyReLU(alpha=0.1)(x)
+# layer5 
+x = Conv2D(filters=128,kernel_size=3,strides=1,padding='same',name='conv_5',use_bias=False)(x)
+x = BatchNormalization(name='norm_5')(x)
+x = LeakyReLU(alpha=0.1)(x)
+x = MaxPooling2D(pool_size=(2,2),strides=2)(x)
 
-x = Conv2D(filters=256,kernel_size=3)
-x = Conv2D(filters = 128,kernel_size=1)
-x = Conv2D(filters=256,kernel_size=3)
+# layer6 
+x = Conv2D(filters=256,kernel_size=3,strides=1,padding='same',name='conv_6',use_bias=False)(x)
+x = BatchNormalization(name='norm_6')(x)
+x = LeakyReLU(alpha=0.1)(x)
 
-x = MaxPooling2D(pool_size=(2,2),strides=2)
+# layer7
+x = Conv2D(filters = 128,kernel_size=1,strides=1,padding='same',name='conv_7',use_bias=False)(x)
+x = BatchNormalization(name='norm_7')(x)
+x = LeakyReLU(alpha=0.1)(x)
 
-x = Conv2D(filters=512,kernel_size=3)
-x = Conv2D(filters = 256,kernel_size=1)
-x = Conv2D(filters=512,kernel_size=3)
-x = Conv2D(filters = 256,kernel_size=1)
-x = Conv2D(filters = 512,kernel_size=3)
-x = MaxPooling2D(pool_size=(2,2),strides=2)
+# layer8
+x = Conv2D(filters=256,kernel_size=3,strides=1,padding='same',name='conv_8',use_bias=False)(x)
+x = BatchNormalization(name='norm_8')(x)
+x = LeakyReLU(alpha=0.1)(x)
+x = MaxPooling2D(pool_size=(2,2))(x)
 
-x = Conv2D(filters=1024,kernel_size=3)
-x = Conv2D(filters = 512,kernel_size=1)
-x = Conv2D(filters=1024,kernel_size=3)
-x = Conv2D(filters = 512,kernel_size=1)
-x = Conv2D(filters = 1024,kernel_size=3)
+# layer9
+x = Conv2D(filters=512,kernel_size=3,strides=1,padding='same',name='conv_9',use_bias=False)(x)
+x = BatchNormalization(name='norm_9')(x)
+x = LeakyReLU(alpha=0.1)(x)
 
-x = Conv2D(filters = 1000,kernel_size=1)
-x = 
+# layer10
+x = Conv2D(filters = 256,kernel_size=1,strides=1,padding='same',name='conv_10',use_bias=False)(x)
+x = BatchNormalization(name='norm_10')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer11
+x = Conv2D(filters=512,kernel_size=3,strides=1,padding='same',name='conv_11',use_bias=False)(x)
+x = BatchNormalization(name='norm_11')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer12 
+x = Conv2D(filters = 256,kernel_size=1,strides=1,padding='some',name='conv_12',use_bias=False)(x)
+x = BatchNormalization(name='norm_12')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer13 
+x = Conv2D(filters = 512,kernel_size=3,strides=1,padding='same',name='conv_13',use_bias=False)(x)
+x = BatchNormalization(name='norm_13')(x)
+x = LeakyReLU(alpha=0.1)(x)
+skip_connection = x 
+x = MaxPooling2D(pool_size=(2,2),strides=2)(x)
+
+# layer14 
+x = Conv2D(filters=1024,kernel_size=3,strides=1,padding='same',name='conv_14',use_bias=False)(x)
+x = BatchNormalization(name='norm_14')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer15 
+x = Conv2D(filters = 512,kernel_size=1,strides=1,padding='same',name='conv_15',use_bias=False)(x)
+x = BatchNormalization(name='norm_15')(x)
+x = LeakyReLU(alpha=0.1)(x)
+# layer16 
+x = Conv2D(filters=1024,kernel_size=3,strides=1,padding='same',name='conv_16',use_bias=False)(x)
+x = BatchNormalization(name='norm_16')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer17
+x = Conv2D(filters = 512,kernel_size=1,strides=1,padding='same',name='conv_17',use_bias=False)(x)
+x = BatchNormalization(name='norm_17')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer18
+x = Conv2D(filters = 1024,kernel_size=3,strides=1,padding='same',name='conv_18',use_bias=False)(x)
+x = BatchNormalization(name='norm_18')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer19 
+x = Conv2D(filters = 1024,kernel_size=1,strides=1,padding='same',name='conv_19',use_bias=False)(x)
+x = BatchNormalization(name='norm_19')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer20
+x = Conv2D(filters = 1024,kernel_size=3,strides=1,padding='same',name='conv_20',use_bias=False)(x)
+x = BatchNormalization(name='norm_20')(x)
+x = LeakyReLU(alpha=0.1)(x)
+
+# layer21
+skip_connection= Conv2D(64,(1,1),strides=1,padding='same',name='conv_21',use_bias=False)(skip_connection)
+skip_connection = BatchNormalization(name='norm_21')(skip_connection)
+skip_connection = LeakyReLU(alpha=0.1)(skip_connection)
+skip_connection = Lambda(space_to_depth_x2)(skip_connection)
+
+x = concatenate([skip_connection,x])
+# layer22 
+x = Conv2D(1024,(3,3),strides=1,padding='same',name='conv_22',use_bias=False)(x)
+x = BatchNormalization(name='norm_22')(x)
+x = LeakyReLU(alpha=0.1)(x)
+# layer23 
+x = Conv2D(filters = BOX*(4+1+CLASS),kernel_size=1,strides=1,padding='same',name='conv_23')(x)
+output = Reshape((GRID_H,GRID_W,BOX,4+1+CLASS))(x)
+
+# small hack to allow true_boxes to be registered when keras buil the model
+ouput = Lambda(lambda args:args[0])([output,true_boxes])
+
+model = Model([input_image,true_boxes],output)
+model.summary()
+'''下載預訓練權重
+!wget https://pjreddie.com/media/files/yolov2.weights
+'''
+path_to_weight = './yolov2.weights'
+class WeightReader:
+    def __init__(self,weight_file):
+        self.offset = 4 
+        self.all_weights = np.fromfile(weight_file,dtype='float32')
+
+    def read_bytes(self,size):
+        self.offset = self.offset + size 
+        return self.all_weights[self.offset-size:self.offset]
+
+    def reset(self):
+        self.offset =4 
+
+reader = WeightReader(path_to_weight)
+print("all_weights.shape = {}".format(reader.all_weights.shape))
+
+reader.reset()
+nb_conv = 23 
+for i in range(1,nb_conv+1):
+    conv_layer = model.get_layer('conv_'+str(i))
+    if i<nb_conv:
+        norm_layer = model.get_layer('norm_'+str(i))
+        size = np.prod(norm_layer.get_weight()[0].shape)
+
+        beta = reader.read_bytes(size)
+        gamma = reader.read_bytes(size)
+        mean =  reader.read_bytes(size)
+        var =  reader.read_bytes(size)
+        weights = norm_layer.set_weights([gamma,beta,mean,var])
+    
+    if len(conv_layer.get_weights())>1:
+        bias = reader.read_bytes(np.prod(conv_layer.get_weights()[1].shape))
+        kernel = reader.read_bytes(np.prod(conv_layer.get_weights()[0].shape))
+        kernel = kernel.reshape(list(reversed(conv_layer.get_weights()[0].shape)))
+        kernel = kernel.transpose([2,3,1,0])
+        conv_layer.set_weights([kernel,bias])
+    else:
+        kernel = reader.read_bytes(np.prod(conv_layer.get_weights()[0].shape))
+        kernel = kernel.reshape(list(reversed(conv_layer.get_weights()[0].shape)))
+        kernel = kernel.transpose([2,3,1,0])
+        conv_layer.set_weights([kernel])
+
+layer = model.layers[-4]#the last convolutional layer
+weights = layer.get_weights()
+new_kernel = np.random.normal(size=weights[0].shape)/(GRID_H*GRID_W)
+new_bias = np.random.normal(size=weights[1].shape)/(GRID_H*GRID_W)
+
+layer.set_weights([new_kernel,new_bias])
+
+
+'''Define a custom learning rate scheduler'''
+from tensorflow import keras 
+class CustomLearningRateScheduler(keras.callbacks.Callback):
+    def __init__(self,schedule):
+        super(CustomLearningRateScheduler,self).__init__()
+        self.schedule = schedule
+
+    def on_epoch_begin(self,epoch,logs=None):
+        if not hasattr(self.model.optimizers,"lr"):
+            raise ValueError("optimizers must have lr attributes")
+        # get the current learning rate from model's optimizer 
+        lr = float(tf.keras.backend.get_value(self.model.optimizers.learning_rate))
+        # call schedule function to get the scheduled learning rate 
+        scheduled_lr = self.schedule(epoch,lr)
+        # set the value back to the optimizer before this epoch starts 
+        tf.keras.backend.set_value(self.model.optimizers.lr,scheduled_lr)
+        print("\nEpoch:%0.5d:Learning rate is %6.4f."%(epoch,scheduled_lr))
+
+LR_SCHEDULE = [
+# epch to start,learning rate tuples
+    (0,0.01),
+    (75,0.001),
+    (105,0.0001),
+]
+def lr_schedule(epoch,lr):
+    '''Helper function to retrieve the schduled learning rate based on epoch'''
+    if epoch<LR_SCHEDULE[0][0] or epoch>LR[-1][0]:
+        return lr 
+    for i in range(len(LR_SCHEDULE)):
+        if epoch == LR_SCHEDULE[i][0]:
+            return LR_SCHEDULE[i][1]
+    return lr 
+
+'''Define the loss function'''
+LAMBDA_NO_OBJECT = 1.0
+LAMBDA_OBJECT    = 5.0
+LAMBDA_COORD     = 1.0
+LAMBDA_CLASS     = 1.0
+def get_cell_grid(GRID_W,GRID_H,BATCH_SIZE):
+    '''
+    Helper function to assure that the bounding box x and y are in the grid cell scale
+    ---output---
+    for any i=0,1...,batch size -1 
+
+    '''
+    cell_x = tf.cast(tf.reshape(tf.tile(
+        tf.range(GRID_W),[GRID_H]),
+        (1,GRID_H,GRID_W,1,1)),
+        tf.float32 
+    )
+    # cell_x = tf.cast(tf.reshape(tf.tile(tf.range(GRID_W), [GRID_H]), (1, GRID_H, GRID_W, 1, 1)), tf.float32)
+    
+    cell_y = tf.transpose(cell_x,(0,2,1,3,4))
+    cell_grid = tf.tile(tf.concat([cell_x,cell_y],-1),[BATCH_SIZE,1,1,BOX,1])
+    return (cell_grid)
+
+
+def adjust_scale_prediction(y_pred,cell_grid,ANCHORS):
+    '''Adjust prediction
+    ===input===
+    y_pred: takes many real values tensor or shape = (N batch ,N Grid w,NAnchor ,4+1+N class)
+    ANCHORS:list containing width and height specialization fo anchor box 
+    ===output===
+
+    pred_box_xy : shape = (N batch, N grid x, N grid y, N anchor, 2), contianing [center_y, center_x] rangining [0,0]x[grid_H-1,grid_W-1]
+    
+    pred_box_xy[irow,igrid_h,igrid_w,ianchor,0] = center_X
+    pred_box_xy[irow,igrid_h,igrid_w,ianchoe,1] = center_1 
+    
+    Calculation process:
+    tf.sigmoid(y_pred[...,:2]) : takes values between 0 and 1 
+    tf.sigmoid(y_pred[...,:2]) + cell_grid: 
+            takes values between 0 and grid_W - 1 for x coordinate 
+            takes values between 0 and grid_H - 1 for y coordinate 
+    
+    '''
+    BOX = int(len(ANCHORS)/2)
+    # adjust x and y 
+    pred_box_xy = tf.sigmoid(y_pred[...,:2])+cell_grid # bx,by 
+
+    # adjust w and h 
+    pred_box_wh = tf.sigmoid(y_pred[...,2:4]) * np.reshape(ANCHORS,[1,1,1,BOX,2])
+
+    # adjust confidence 
+    pred_box_conf = tf.sigmoid(y_pred[...,4]) # prob bb 
+
+    # adjust class probabilities 
+    pred_box_class = y_pred[...,5:] # prC1,prC2,
+    return (pred_box_xy,pred_box_wh,pred_box_conf,pred_box_class)
+
+
+def print_min_max(vec,title):
+    try:
+        print("{} MIN={:5.2f}, MAX={:5.2f}".format(
+        title,np.min(vec),np.max(vec)))
+  except ValueError:  #raised if `y` is empty.
+      print(e)
 
 
 
+GRID_W = 13 
+GRID_H = 13 
+BOX  = int(len(ANCHOR)/2)
+CLASS = len(LABELS)
+size = BATCH_SIZE*GRID_W*GRID_H*BOX*(4+1+CLASS)
+y_pred = np.random.normal(size=size,scale=10/(GRID_H*GRID_W))
+y_pred = y_pred.reshape(BATCH_SIZE,GRID_H,GRID_W,BOX,4+1+CLASS)
+y_pred_tf = tf.constant(y_pred,dtype="float32")
+cell_grid = get_cell_grid(GRID_W,GRID_H,BATCH_SIZE,BOX)
+(pred_box_xy,   pred_box_wh, pred_box_conf, pred_box_class) = adjust_scale_prediction(y_pred_tf, 
+                                                                cell_grid, 
+                                                                ANCHORS)
+
+'''extract the groun truth'''
+def extract_ground_truth(y_true):
+    true_box_xy = y_true[...,0:2]
+    true_box_wh = y_true[...,2:4]
+    true_box_conf = y_true[...,4]
+    true_box_class = tf,argmax(y_true[...,5]:,-1)
+    return (true_box_xy,true_box_wh,true_box_conf,true_box_class)
+
+y_batch_tf = tf,constant(y_batch,dtype='float32')
+(true_box_xy,true_box_wh,true_box_conf,true_box_class) = extract_ground_truth(y_batch_tf)
+
+def cal_loss_xywh(true_box_conf,COORD_SCALE,true_box_xy,pred_box_xy,true_box_wh,pred_box_wh):
+    coord_mask = tf.expannd_dims(true_box_conf,axis=-1)*LAMBDA_COORD
+    nb_coord_box = tf.reduce_sum(tf.cast(coord_mask>0.0,tf.float32))
+    loss_xy = tf.reduce_sum(tf.square(true_box_xy-pred_box_xy) * coord_mask) / (nb_coord_box + 1e-6) / 2.
+    loss_wh = tf.reduce_sum(tf.square(true_box_wh-pred_box_wh) * coord_mask) / (nb_coord_box + 1e-6) / 2.
+
+    return (loss_xy + loss_wh, coord_mask)
+
+LAMBDA_COORD = 1
+loss_xywh, coord_mask  = calc_loss_xywh(true_box_conf, LAMBDA_COORD, true_box_xy, pred_box_xy,true_box_wh, pred_box_wh)
