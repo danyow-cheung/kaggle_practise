@@ -318,18 +318,18 @@ class SimpleBatchGenerator(Sequence):
         if self.shuffle:
             np.random.shuffle(self.images)
         
-        def __len__(self):
-            return int(np.ceil(float(len(self.images))/self.config['BATCH_SIZE']))
+    def __len__(self):
+        return int(np.ceil(float(len(self.images))/self.config['BATCH_SIZE']))
         
-        def __getitem___(self,idx):
-            '''
-            Arguments:
-                idx: non-negeative integer value 
-            Returns:
-                x_batch: the numpy array of shape (BATCH_SIZE,IMAGE_H,IMAGE_W,N,channels)
+    def __getitem___(self,idx):
+        '''
+        Arguments:
+            idx: non-negeative integer value 
+        Returns:
+            x_batch: the numpy array of shape (BATCH_SIZE,IMAGE_H,IMAGE_W,N,channels)
                         x_batch[iframe,:,:,:] contains a iframeth frame of size  (IMAGE_H,IMAGE_W).
 
-                y_batch: the numpy array of shape (BATCH_SIZE,GRID_H,GRID_W,BOX,4+1+Nclassess)
+            y_batch: the numpy array of shape (BATCH_SIZE,GRID_H,GRID_W,BOX,4+1+Nclassess)
                         Box = the number of anchor boxes
 
                         y_batch[iframe,igird_h,igrid_w,ianchor,:4] contains a (center_x,center_y,center_w,center_h)
@@ -339,7 +339,7 @@ class SimpleBatchGenerator(Sequence):
                         y_batch[iframe,igrid_h,igrid_w,ianchor,5 + iclass] contains 1 if the iclass^th 
                         class object exists in this (grid cell, anchor) pair, else it contains 0.
 
-                b_batch: the numpy array of shape(BATCH_SIZE,1,1,1,TRUE_BOX_BUFFER,4)
+            b_batch: the numpy array of shape(BATCH_SIZE,1,1,1,TRUE_BOX_BUFFER,4)
                         b_batch[iframe,1,1,1,ibuffer,ianchor,:] contains ibufferth object's (center_X,center_y,center_w,center_h) in iframe frame
                         If ibuffer > N objects in iframeth frame ,then the values are simply 0 
                         TRUE_BOX_BUFFER has to be some large number, so that the frame with the 
@@ -348,61 +348,61 @@ class SimpleBatchGenerator(Sequence):
                         The order of the objects do not matter.
 
                         This is just a hack to easily calculate loss. 
-            '''
-            l_bound = idx*self.config['BATCH_SIZE']
+        '''
+        l_bound = idx*self.config['BATCH_SIZE']
 
-            r_bound =  (idx+1)*self.config['BATCH_SIZE']
+        r_bound =  (idx+1)*self.config['BATCH_SIZE']
 
-            if r_bound>len(self.images):
-                r_bound = len(self.images)
-                l_bound = r_bound - self.config['BATCH_SIZE']
-            instance_count = 0 
-            # prepare empty storage space will be output 
-            x_batch = np.zeros((r_bound - l_bound,self.config['IMAGE_H'],self.config['IMAGE_W'],3))
-            b_batch = np.zeros((r_bound - l_bound,1,1,1,self.config['TRUE_BOX_BUFFER'],4))
-            # list of self.config['TRUE_self.config['BOX']_BUFFER'] GT boxes
-            y_batch = np.zeros((r_bound - l_bound ,self.config['GRID_H'],self.config['GRID_W'],self.config['BOX'],4+1+len(self.config['LABELS'])))
-            # desired network output 
-            for train_instance in self.images[l_bound:r_bound]:
-                # augment input image and fix object's position and size 
-                img,all_objs =self.imageRead.fit(train_instance)
+        if r_bound>len(self.images):
+            r_bound = len(self.images)
+            l_bound = r_bound - self.config['BATCH_SIZE']
+        instance_count = 0 
+        # prepare empty storage space will be output 
+        x_batch = np.zeros((r_bound - l_bound,self.config['IMAGE_H'],self.config['IMAGE_W'],3))
+        b_batch = np.zeros((r_bound - l_bound,1,1,1,self.config['TRUE_BOX_BUFFER'],4))
+        # list of self.config['TRUE_self.config['BOX']_BUFFER'] GT boxes
+        y_batch = np.zeros((r_bound - l_bound ,self.config['GRID_H'],self.config['GRID_W'],self.config['BOX'],4+1+len(self.config['LABELS'])))
+        # desired network output 
+        for train_instance in self.images[l_bound:r_bound]:
+            # augment input image and fix object's position and size 
+            img,all_objs =self.imageReader.fit(train_instance)
 
-                # construct output from object's x,y,w,h
-                true_box_index = 0 
-                for obj in all_objs:
-                    if obj['xmax']>obj['xmin'] and obj['ymax']>obj['ymin'] and obj['name'] in self.config['LABELS']:
-                        center_x,center_y = rescale_centerxy(obj,self.config)
+            # construct output from object's x,y,w,h
+            true_box_index = 0 
+            for obj in all_objs:
+                if obj['xmax']>obj['xmin'] and obj['ymax']>obj['ymin'] and obj['name'] in self.config['LABELS']:
+                    center_x,center_y = rescale_centerxy(obj,self.config)
 
-                        grid_x = int(np.floor(center_x))
-                        grid_y = int(np.floor(center_y))
+                    grid_x = int(np.floor(center_x))
+                    grid_y = int(np.floor(center_y))
 
-                        if grid_x <self.config['GRID_W'] and grid_y < self.config['GRID_H']:
-                            obj_idx = self.config['LABELS'].index(obj['name'])
-                            center_w,center_h = rescale_centerwh(obj,self.config)
-                            box = [center_x,center_y,center_w,center_h]
-                            best_anchor,max_iou = self.bestAnchorBoxFinder.find(center_w,center_h)
-                            # assign ground truth x,y,w,h confidence and class probs to y_batch
-                            # it could happen that the same grid cell contain 2 similar shape objects
-                            # as a result the same anchor box is selected as the best anchor box by the multiple objects
-                            # in such case,the object is over written
-                            y_batch[instance_count, grid_y, grid_x, best_anchor, 0:4] = box # center_x, center_y, w, h
-                            y_batch[instance_count, grid_y, grid_x, best_anchor, 4  ] = 1. # ground truth confidence is 1
-                            y_batch[instance_count, grid_y, grid_x, best_anchor, 5+obj_idx] = 1 # class probability of the object
+                    if grid_x <self.config['GRID_W'] and grid_y < self.config['GRID_H']:
+                        obj_idx = self.config['LABELS'].index(obj['name'])
+                        center_w,center_h = rescale_centerwh(obj,self.config)
+                        box = [center_x,center_y,center_w,center_h]
+                        best_anchor,max_iou = self.bestAnchorBoxFinder.find(center_w,center_h)
+                        # assign ground truth x,y,w,h confidence and class probs to y_batch
+                        # it could happen that the same grid cell contain 2 similar shape objects
+                        # as a result the same anchor box is selected as the best anchor box by the multiple objects
+                        # in such case,the object is over written
+                        y_batch[instance_count, grid_y, grid_x, best_anchor, 0:4] = box # center_x, center_y, w, h
+                        y_batch[instance_count, grid_y, grid_x, best_anchor, 4  ] = 1. # ground truth confidence is 1
+                        y_batch[instance_count, grid_y, grid_x, best_anchor, 5+obj_idx] = 1 # class probability of the object
 
-                            # assign the true box to b_batch
-                            b_batch[instance_count,0,0,0,true_box_index] = box 
+                        # assign the true box to b_batch
+                        b_batch[instance_count,0,0,0,true_box_index] = box 
 
-                            true_box_index +=1 
-                            true_box_index = true_box_index%self.config['TRUE_BOX_BUFFER']
-            
-                x_batch[instance_count] = img 
-                # increase instance counter in current batch
-                instance_count += 1
-            return [x_batch,b_batch],y_batch
+                        true_box_index +=1 
+                        true_box_index = true_box_index%self.config['TRUE_BOX_BUFFER']
+                    
+            x_batch[instance_count] = img 
+            # increase instance counter in current batch
+            instance_count += 1
+        return [x_batch,b_batch],y_batch
 
-        def on_epoch_end(self):
-            if self.shuffle:
-                np.random.shuffle(self.images)
+    def on_epoch_end(self):
+        if self.shuffle:
+            np.random.shuffle(self.images)
 
 IMAGE_H, IMAGE_W = 416, 416
 GRID_H,GRID_W = 13,13
@@ -448,7 +448,7 @@ def check_object_in_grid_anchor_pair(irow):
                 if C==1:
                     class_num = np.array(LABELS)[np.where(vec[5:])]
                     assert len(class_num)==1 
-                    print("igrid_h={:02.0f},igrid_w={:02.0f},iAnchor={:02.0f}, {}".format(igrid_h,igrid_w,ianchor,class_nm[0]))
+                    print("igrid_h={:02.0f},igrid_w={:02.0f},iAnchor={:02.0f}, {}".format(igrid_h,igrid_w,ianchor,class_num[0]))
 check_object_in_grid_anchor_pair(iframe)
 
 def plot_image_with_grid_cell_partition(irow):
@@ -530,14 +530,14 @@ import tensorflow.keras.backend as K
 import tensorflow as tf
 
 def space_to_depth_x2(x):
-    return tf.nn.space_to_batch(x,block_size=2)
+    return tf.nn.space_to_depth(x,block_size=2)
 
 '''https://fairyonice.github.io/Part_3_Object_Detection_with_Yolo_using_VOC_2012_data_model.html'''
 input_image = Input(shape=(IMAGE_H,IMAGE_W,3))
 true_boxes = Input(shape=(1,1,1,TRUE_BOX_BUFFER,4))
 
 # layer1
-x = Conv2D(filters=32,kernel_size=3,strides=1)
+x = Conv2D(32, (3,3), strides=(1,1), padding='same', name='conv_1', use_bias=False)(input_image)
 x = BatchNormalization(name='norm_1')(x)
 x = LeakyReLU(alpha=0.1)(x)
 x = MaxPooling2D(pool_size=(2,2),strides=2)(x)
@@ -549,7 +549,7 @@ x = LeakyReLU(alpha=0.1)(x)
 x = MaxPooling2D(pool_size=(2,2),strides=2)(x)
 
 # layer3
-x = Conv2D(filters=128,kernel_size=3,strides=1,padding='same',name='conv_5',use_bias=False)(x)
+x = Conv2D(filters=128,kernel_size=3,strides=1,padding='same',name='conv_3',use_bias=False)(x)
 x = BatchNormalization(name='norm_3')(x)
 x = LeakyReLU(alpha=0.1)(x)
 
@@ -595,7 +595,7 @@ x = BatchNormalization(name='norm_11')(x)
 x = LeakyReLU(alpha=0.1)(x)
 
 # layer12 
-x = Conv2D(filters = 256,kernel_size=1,strides=1,padding='some',name='conv_12',use_bias=False)(x)
+x = Conv2D(filters = 256,kernel_size=1,strides=1,padding='same',name='conv_12',use_bias=False)(x)
 x = BatchNormalization(name='norm_12')(x)
 x = LeakyReLU(alpha=0.1)(x)
 
@@ -685,7 +685,7 @@ for i in range(1,nb_conv+1):
     conv_layer = model.get_layer('conv_'+str(i))
     if i<nb_conv:
         norm_layer = model.get_layer('norm_'+str(i))
-        size = np.prod(norm_layer.get_weight()[0].shape)
+        size = np.prod(norm_layer.get_weights()[0].shape)
 
         beta = reader.read_bytes(size)
         gamma = reader.read_bytes(size)
@@ -751,7 +751,7 @@ LAMBDA_NO_OBJECT = 1.0
 LAMBDA_OBJECT    = 5.0
 LAMBDA_COORD     = 1.0
 LAMBDA_CLASS     = 1.0
-def get_cell_grid(GRID_W,GRID_H,BATCH_SIZE):
+def get_cell_grid(GRID_W,GRID_H,BATCH_SIZE,BOX):
     '''
     Helper function to assure that the bounding box x and y are in the grid cell scale
     ---output---
@@ -808,14 +808,14 @@ def print_min_max(vec,title):
     try:
         print("{} MIN={:5.2f}, MAX={:5.2f}".format(
         title,np.min(vec),np.max(vec)))
-  except ValueError:  #raised if `y` is empty.
-      print(e)
+      except ValueError:  #raised if `y` is empty.
+          print(e)
 
 
 
 GRID_W = 13 
 GRID_H = 13 
-BOX  = int(len(ANCHOR)/2)
+BOX  = int(len(ANCHORS)/2)
 CLASS = len(LABELS)
 size = BATCH_SIZE*GRID_W*GRID_H*BOX*(4+1+CLASS)
 y_pred = np.random.normal(size=size,scale=10/(GRID_H*GRID_W))
@@ -831,14 +831,14 @@ def extract_ground_truth(y_true):
     true_box_xy = y_true[...,0:2]
     true_box_wh = y_true[...,2:4]
     true_box_conf = y_true[...,4]
-    true_box_class = tf,argmax(y_true[...,5]:,-1)
+    true_box_class = tf.argmax(y_true[...,5:],-1)
     return (true_box_xy,true_box_wh,true_box_conf,true_box_class)
 
-y_batch_tf = tf,constant(y_batch,dtype='float32')
+y_batch_tf = tf.constant(y_batch,dtype='float32')
 (true_box_xy,true_box_wh,true_box_conf,true_box_class) = extract_ground_truth(y_batch_tf)
 
 def cal_loss_xywh(true_box_conf,COORD_SCALE,true_box_xy,pred_box_xy,true_box_wh,pred_box_wh):
-    coord_mask = tf.expannd_dims(true_box_conf,axis=-1)*LAMBDA_COORD
+    coord_mask = tf.expand_dims(true_box_conf,axis=-1)*LAMBDA_COORD
     nb_coord_box = tf.reduce_sum(tf.cast(coord_mask>0.0,tf.float32))
     loss_xy = tf.reduce_sum(tf.square(true_box_xy-pred_box_xy) * coord_mask) / (nb_coord_box + 1e-6) / 2.
     loss_wh = tf.reduce_sum(tf.square(true_box_wh-pred_box_wh) * coord_mask) / (nb_coord_box + 1e-6) / 2.
@@ -846,7 +846,7 @@ def cal_loss_xywh(true_box_conf,COORD_SCALE,true_box_xy,pred_box_xy,true_box_wh,
     return (loss_xy + loss_wh, coord_mask)
 
 LAMBDA_COORD = 1
-loss_xywh, coord_mask  = calc_loss_xywh(true_box_conf, LAMBDA_COORD, true_box_xy, pred_box_xy,true_box_wh, pred_box_wh)
+loss_xywh, coord_mask  = cal_loss_xywh(true_box_conf, LAMBDA_COORD, true_box_xy, pred_box_xy,true_box_wh, pred_box_wh)
 
 
 
@@ -867,7 +867,7 @@ def cal_loss_class(true_box_conf,CLASS_SCALE,true_box_class,pred_box_class):
     '''
     class_mask = true_box_conf * CLASS_SCALE 
     nb_class_box = tf.reduce_sum(tf.cast(class_mask >0.0 ,tf.float32))
-    loss_class = tf.nn.spare_softmax_cross_entropy_with_logits(
+    loss_class = tf.nn.sparse_softmax_cross_entropy_with_logits(
         labels=true_box_class,
         logits = pred_box_class
         )
@@ -875,7 +875,10 @@ def cal_loss_class(true_box_conf,CLASS_SCALE,true_box_class,pred_box_class):
     return (loss_class)
 
 LAMBDA_CLASS   = 1
-loss_class  = calc_loss_class(true_box_conf,LAMBDA_CLASS
+loss_class  = cal_loss_class(true_box_conf,LAMBDA_CLASS,
+                                 true_box_class,pred_box_class)
+print("*"*30 + "\nouput\n" + "*"*30) 
+print("loss_class = {:4.3f}".format(loss_class))
 
 def get_intersect_area(true_xy,true_wh,pred_xy,pred_wh):
     '''
@@ -898,7 +901,7 @@ def get_intersect_area(true_xy,true_wh,pred_xy,pred_wh):
     intersect_wh   : (rmaxx - tx1, rmaxy - ty1)
         
     '''
-    trur_box_half = true_wh/2 
+    true_wh_half = true_wh/2 
     true_mins = true_xy - true_wh_half 
     true_maxes = true_xy + true_wh_half
 
@@ -938,7 +941,7 @@ def cal_IOU_pred_true_assigned(true_box_conf,true_box_xy,true_box_wh,pred_box_xy
     true_box_conf_IOU = iou_scores * true_box_conf
     return (true_box_conf_IOU)
 
-true_box_conf_IOU = calc_IOU_pred_true_assigned(
+true_box_conf_IOU = cal_IOU_pred_true_assigned(
                             true_box_conf,
                             true_box_xy, true_box_wh,
                             pred_box_xy,  pred_box_wh)
@@ -969,15 +972,15 @@ def cal_IOU_pred_true_best(pred_box_xy,pred_box_wh,true_boxes):
     true_xy = true_boxes[...,0:2]
     true_wh = true_boxes[...,2:4]
 
-    pred_xy = tf.expannd_dims(pred_box_xy,4)
-    pred_wh = tf.expannd_dims(pred_box_wh,4)
+    pred_xy = tf.expand_dims(pred_box_xy,4)
+    pred_wh = tf.expand_dims(pred_box_wh,4)
 
     iou_scores = get_intersect_area(true_xy,true_wh,pred_xy,pred_wh)
     best_ious = tf.reduce_max(iou_scores,axis=4)
     return (best_ious)
 
 true_boxes = tf.constant(b_batch,dtype="float32")
-best_ious = calc_IOU_pred_true_best(pred_box_xy,
+best_ious = cal_IOU_pred_true_best(pred_box_xy,
                                        pred_box_wh,
                                        true_boxes)
 
@@ -1029,7 +1032,345 @@ def cal_loss_conf(conf_mask,true_box_conf_IOU,pred_box_conf):
     loss_conf = tf.reduce_sum(tf.square(true_box_conf_IOU - pred_box_conf)*conf_mask)
     return (loss_conf)
 
-loss_conf = calc_loss_conf(conf_mask,true_box_conf_IOU, pred_box_conf)
+loss_conf = cal_loss_conf(conf_mask,true_box_conf_IOU, pred_box_conf)
 
 # https://www.maskaravivek.com/post/yolov2/
 # 2.1 custom_loss 
+
+def custome_loss(y_true,y_pred):
+    '''
+    y_true : (N batch, N grid h, N grid w, N anchor, 4 + 1 + N classes)
+    y_true[irow, i_gridh, i_gridw, i_anchor, :4] = center_x, center_y, w, h
+    
+        center_x : The x coordinate center of the bounding box.
+                   Rescaled to range between 0 and N gird  w (e.g., ranging between [0,13)
+        center_y : The y coordinate center of the bounding box.
+                   Rescaled to range between 0 and N gird  h (e.g., ranging between [0,13)
+        w        : The width of the bounding box.
+                   Rescaled to range between 0 and N gird  w (e.g., ranging between [0,13)
+        h        : The height of the bounding box.
+                   Rescaled to range between 0 and N gird  h (e.g., ranging between [0,13)
+                   
+    y_true[irow, i_gridh, i_gridw, i_anchor, 4] = ground truth confidence
+        
+        ground truth confidence is 1 if object exists in this (anchor box, gird cell) pair
+    
+    y_true[irow, i_gridh, i_gridw, i_anchor, 5 + iclass] = 1 if the object is in category  else 0
+        
+    '''
+    total_recall = tf.Variable(0.)
+    # step 1 : Adjust prediction output 
+    cell_grid = get_cell_grid(GRID_W,GRID_H,BATCH_SIZE,BOX)
+    pred_box_xy ,pred_box_wh,pred_box_conf ,pred_box_class = adjust_scale_prediction(y_pred,cell_grid,ANCHORS)
+
+    # step 2 : Extract ground truth output 
+    true_box_xy,true_box_wh,true_box_conf,true_box_class = extract_ground_truth(y_true)
+    
+    # step 3: Calculate loss for the bouding box parameters 
+    loss_xywh,coord_mask = cal_loss_xywh(true_box_conf,LAMBDA_COORD,true_box_xy,pred_box_xy,true_box_wh,pred_box_wh)
+
+    # step 4 : Calculate loss for the class probabilities 
+    loss_class = cal_loss_class(true_box_conf,LAMBDA_CLASS,true_box_class,pred_box_class)
+
+    # step 5 : For each (grid cell,anchor) pair:
+    #   calculate the IoU between predicted and ground truth bounding box 
+
+    true_box_conf_IOU = cal_IOU_pred_true_assigned(
+        true_box_conf,
+        true_box_xy,true_box_wh,
+        pred_box_xy,pred_box_wh
+    )
+    # step 6 : For each predicted bound box from(grid cell,anchor box)
+    #   calculate the best IOU, regardless of the ground truth anchor box that each object gets assigned.
+    best_ious = cal_IOU_pred_true_best(pred_box_xy,pred_box_wh,true_boxes)
+
+    # step 7 : For each grid cell,calculate the L_{i,j} ^{noobj}
+    conf_mask = get_conf_mask(best_ious,true_box_conf,true_box_conf_IOU,LAMBDA_NO_OBJECT,LAMBDA_OBJECT)
+
+    # step 8 : Calculate loss for the confidence 
+    loss_conf = cal_loss_conf(conf_mask,true_box_conf_IOU,pred_box_conf)
+
+    loss = loss_xywh + loss_conf + loss_class
+    return loss 
+
+true_boxes = tf.Variable(np.zeros_like(b_batch),dtype='float32')
+loss = custome_loss(y_batch.astype('float32'),y_pred.astype('float32'))
+
+
+'''Add a callback f
+or saving the weights 
+> Conpile the moedl''' 
+from tensorflow import keras 
+from tensorflow.keras.callbacks import EarlyStopping,ModelCheckpoint
+from tensorflow.keras.optimizers import SGD,Adam,RMSprop
+
+dir_log = 'logs/'
+try:
+    os.makedirs(dir_log)
+except Exception as e :
+    print(e)
+
+generator_config['BATCH_SIZE'] = BATCH_SIZE
+early_stop = EarlyStopping(
+    monitor='loss',
+    min_delta = 0.001,
+    patience=3,
+    mode='min',
+    verbose=1)
+
+checkpoint = ModelCheckpoint(
+    '/content/gdrive/My Drive/cv_data/yolo_v2/weights_yolo_on_voc2012.h5', 
+    monitor = 'loss',
+    verbose=1,
+    save_best_only = True,
+    mode = 'min', 
+    period = 1
+    )
+
+optimizer = Adam(lr=0.5e-4,beta_1=0.9,beta_2 = 0.999,epsilon=1e-08,decay=0.0)
+model.compile(loss=custome_loss,optimizer=optimizer)
+
+
+'''Train the model'''
+tf.config.experimental_run_functions_eagerly(True)
+model.fit_generator(
+    generator = train_batch_generator,
+    steps_per_epoch = len(train_batch_generator),
+    epochs=50, 
+    verbose = 1 ,
+    callbacks = [early_stop,checkpoint], 
+    max_queue_size = 3 )
+
+
+'''Evaluation'''
+imageReader = ImageReader(IMAGE_H,IMAGE_W,norm = lambda image:image /225. )
+out = imageReader.fit(train_image_folder+'/2007_0054430.jpg')
+print(out.shape)
+X_test = np.expand_dims(out,0)
+print(X_test.shape)
+# handle the hack input
+dummy_array = np.zeros((1,1,1,1,TRUE_BOX_BUFFER,4))
+y_pred = model.predict([X_test,dummy_array])
+print(y_pred.shape)
+'''Note:that the `y_pred` needs to be scaled up,so we define a class called `OutputRescaler` for it '''
+class OutputRescaler(object):
+    def __init__(self,ANCHORS):
+        self.ANCHORS = ANCHORS
+
+    def _sigmoid(self,x):
+        return 1./(1.+np.exp(-x))
+
+    def _softmax(self,x,axis=-1,t=-100):
+        x = x - np.max(x)
+        if np.min(x)<t:
+            x = x/np.min(x)*t 
+        e_x = np.exp(x)
+        return e_x/e_x.sum(axis,keepdims=True)
+
+    def get_shifting_matrix(self,netout):
+        GRID_H ,GRID_W,BOX = netout.shape[:3]
+        no = netout[...,0]
+
+        ANCHORSw = self.ANCHORS[::2]
+        ANCHORSh = self.ANCHORS[1::2]
+        
+        mat_GRID_W = np.zeros_like(no)
+        for igrid_w in range(GRID_W):
+            mat_GRID_W[:,igrid_w,:] = igrid_w 
+
+        mat_GRID_H = np.zeros_like(no)
+        for igrid_h in range(GRID_H):
+            mat_GRID_H[igrid_h,:,:,] = igrid_h  
+
+        mat_ANCHOR_W = np.zeros_like(no)
+        for ianchor in range(BOX):
+            mat_ANCHOR_W[:,:,ianchor] = ANCHORSw[ianchor]
+        mat_ANCHOR_H = np.zeros_like(no)
+        for ianchor in range(BOX):
+            mat_ANCHOR_H[:,:,ianchor] = ANCHORSh[ianchor]
+
+        return (mat_GRID_W,mat_GRID_H,mat_ANCHOR_W,mat_ANCHOR_H)
+
+    def fit(self,netout):
+        '''
+        netout  : np.array of shape (N grid h, N grid w, N anchor, 4 + 1 + N class)
+        
+        a single image output of model.predict()
+        '''
+        GRID_H,GRID_W,BOX = netout.shape[:3] 
+
+        (mat_GRID_W,mat_GRID_H,mat_ANCHOR_W,mat_ANCHOR_H) = self.get_shifting_matrix(netout)
+
+        # bouding box parameters 
+        netout[...,0] = (self._sigmoid(netout[...,0]) + mat_GRID_W)/GRID_W
+        netout[...,1] = (self._sigmoid(netout[...,1]) + mat_GRID_H)/GRID_H 
+        netout[...,2] = (np.exp(netout[...,2]) *mat_GRID_W)/GRID_W 
+        netout[...,3] = (np.exp(netout[...,3]) *mat_ANCHOR_H)/GRID_H 
+
+        # rescale the confindence to range 0 and 1 
+        netout[...,4] = self._sigmoid(netout[...,4])
+        expand_conf =  np.expannd_dims(netout[...,4],-1) 
+
+        netout[...,5] = expand_conf * self._softmax(netout[...,5:])
+
+        return (netout)
+
+netout = y_pred[0]
+outputRescaler = OutputRescaler(ANCHORS=ANCHORS)
+netout_scale = outputRescaler.fit(netout)
+
+'''
+Also, let's define a method to find bounding boxes with high confidence probability.
+'''
+def find_high_class_probability_bbox(netout_scale,obj_threshold):
+    '''
+    == Input == 
+    netout : y_pred[i] np.array of shape (GRID_H, GRID_W, BOX, 4 + 1 + N class)
+    
+             x, w must be a unit of image width
+             y, h must be a unit of image height
+             c must be in between 0 and 1
+             p^c must be in between 0 and 1
+    == Output ==
+    
+    boxes  : list containing bounding box with Pr(object is in class C) > 0 for at least in one class C 
+    
+             
+    '''
+    GRID_H,GRID_W,BOX = netout_scale.shape[:3]
+    boxes = []
+    for row in range(GRID_H):
+        for col in range(GRID_W):
+            for b in range(BOX):
+                # from 4th element onwards are confidence and class classes 
+                classes = netout_scale[row,col,b,5:]
+                if np.sum(classes)>0:
+                    x,y,w,h  = netout_scale[row,col,b,:4]
+                    confidence = netout_scale[row,col,b,4]
+                    box = BoundBox(x-w/2,y-h/2.x+w/2,y+h/2,confidence,classes)
+                    if box.get_score()>obj_threshold:
+                        boxes.append(box)
+    return boxes 
+
+# try above function and see if it works 
+obj_threshold = 0.015
+boxes_tiny_threshold = find_high_class_probability_bbox(netout_scale,obj_threshold)
+print("obj_threshold={}".format(obj_threshold))
+print("In total, YOLO can produce GRID_H * GRID_W * BOX = {} bounding boxes ".format( GRID_H * GRID_W * BOX))
+print("I found {} bounding boxes with top class probability > {}".format(len(boxes_tiny_threshold),obj_threshold))
+
+obj_threshold = 0.03
+boxes = find_high_class_probability_bbox(netout_scale,obj_threshold)
+print("\nobj_threshold={}".format(obj_threshold))
+print("In total, YOLO can produce GRID_H * GRID_W * BOX = {} bounding boxes ".format( GRID_H * GRID_W * BOX))
+print("I found {} bounding boxes with top class probability > {}".format(len(boxes),obj_threshold))
+
+'''define a function to draw boxes on the image'''
+import seaborn as sns 
+def draw_boxes(image,boxes,labels,obj_baseline=0.05,verbose=False):
+    '''
+    Image: np.array of shape (N,N,3)
+    '''
+    def adjust_minmax(c,_max):
+        if c<0:
+            c = 0 
+        if c>max:
+            c = _max 
+        return c 
+
+    image = copy.deepcopy(image)
+    image_h ,image_w ,_= image,shape
+    score_resclaed = np.array([box.get_score() for box in boxes])
+    score_resclaed /= obj_baseline
+
+    colors = sns.color_palette('husl',8)
+    for sr,box,color in zip(score_resclaed,boxes,colors):
+        xmin = adjust_minmax(int(box.xmin*image_w),image_w)
+        ymin = adjust_minmax(int(box.ymin*image_h),image_h)
+        xmax = adjust_minmax(int(box.xmax*image_w),image_W)
+        ymax = adjust_minmax(int(box.ymax*image_h),image_h)
+
+        text = '{:10} {:4.3f}'.format(labels[box.label],box.get_score())
+        if verbose:
+            print("{} xmin={:4.0f},ymin={:4.0f},xmax={:4.0f},ymax={:4.0f}".format(text,xmin,ymin,xmax,ymax,text))
+        cv2.rectangle(
+            image,pt1= (xmin,ymin),pt2=(xmax,ymax),color=color,thickness=sr)
+
+        cv2.putText(
+            img= image,
+            text = text , 
+            org = (xmin+13,ymin+13),
+            fontFace  = cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale = 1e-3 * image_h,
+            color     = (1, 0, 1),
+            thickness = 1)
+        
+    return image 
+
+
+print("Plot with low object threshold")
+ima = draw_boxes(X_test[0],boxes_tiny_threshold,LABELS,verbose=True)
+figsize = (15,15)
+plt.figure(figsize=figsize)
+plt.imshow(ima); 
+plt.title("Plot with low object threshold")
+plt.show()
+
+print("Plot with high object threshold")
+ima = draw_boxes(X_test[0],boxes,LABELS,verbose=True)
+figsize = (15,15)
+plt.figure(figsize=figsize)
+plt.imshow(ima); 
+plt.title("Plot with high object threshold")
+plt.show() 
+
+
+'''Apply non-max suppression'''
+
+def nonmax_suppression(boxes,iou_threshold,obj_threshold):
+    '''
+    boxes : list containing "good" BoundBox of a frame
+            [BoundBox(),BoundBox(),...]
+    '''
+    bestAnchorBoxFinder = BestAnchorBoxFinder([])
+
+    CLASS = len(boxes[0].classes)
+
+    index_boxes = []
+    # suppress non-maximal boxes 
+    for c in range(CLASS):
+        # extract class probabilities of the c^th class from multiple bbox 
+        class_probability_from_bbxs = [box.classes[c] for box in boxes]
+
+        # sorted_indices[i] contains the i^th largest class probabilities 
+        sorted_indices = list(reversed(np.argsort(class_probability_from_bbxs)))
+
+        for i in range(len(sorted_indices)):
+            index_i = sorted_indices[i]
+            # if class probability in zero then ignore 
+            if boxes[index_i].classes[c]==0:
+                continue
+            else:
+                index_boxes.append(index_i)
+                for j in range(i+1,len(sorted_indices)):
+                    index_j = sorted_indices[j]
+
+                    # check if the selected i^th bounding box has high IOU with any of the remaining bbox
+                    # if so, the remaining bbox' class probabilities are set to 0.
+                    bbox_iou = bestAnchorBoxFinder.bbox_iou(boxes[index_i],boxes[index_j])
+                    if bbox_iou>=iou_threshold:
+                        classes = boxes[index_j].classes  
+                        classes[c] = 0 
+                        boxes[index_j].set_class(classes)
+
+    newboxes = [boxes[i] for i in index_boxes if boxes[i].get_score()>obj_threshold]
+    return newboxes 
+iou_threshold = 0.01
+final_boxes = nonmax_suppression(boxes,iou_threshold=iou_threshold,obj_threshold=obj_threshold)
+print("{} final number of boxes".format(len(final_boxes)))
+ima = draw_boxes(X_test[0],final_boxes,LABELS,verbose=True)
+figsize = (15,15)
+plt.figure(figsize=figsize)
+plt.imshow(ima); 
+plt.show()
+'''END'''
