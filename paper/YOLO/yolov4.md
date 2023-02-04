@@ -2,7 +2,7 @@
 
 ## Abstract 
 
-we assume that such universal features include Weighted-Residual-Connections(WRC).Cross-Stage-Partial-connections (CSP),
+~~we assume that such universal features include Weighted-Residual-Connections(WRC).Cross-Stage-Partial-connections (CSP),~~
 
 
 
@@ -60,7 +60,7 @@ It is also possible to make a two-stage object detector an anchor-free object de
 
 雙通道也能發展成anchor-free
 
-
+> <img src= 'free-base.png'>
 
 
 
@@ -90,7 +90,7 @@ To sum up,an ordinary object detector is composed of serval parts
 
 - **Neck:**
 
-  *collect features map from different stages*
+  *collect features map from different stages從不同階段收集特徵圖*
 
   - **Additional blocks:**SPP,ASPP,RFB,SAM
   - **Path-aggregation blocks:**PPN,PAN,NAS-FPN,Fully-connected FPN,BiFPN,ASFF,SFAM
@@ -377,9 +377,25 @@ In addition,batch normalization calculates  activation statistics from 4 differe
 
 ### YOLOv4
 
-Backbone：CSPDarknet53 
+> <img src= 'https://www.researchgate.net/publication/356638292/figure/fig1/AS:1096930679623686@1638540062632/A-detection-model-contains-a-backbone-neck-head-module-The-backbone-module-exploits.png'>
+>
+> Backbone:預訓練模型
+>
+> Neck:從不同階段預測特徵圖
+>
+> Head:預測類別概率
+
+Backbone：CSPDarknet53
+
+<img src ='https://www.researchgate.net/publication/351731859/figure/fig2/AS:1025659312816128@1621547644217/The-structure-of-CSPDarknet53-a-and-CSPDarknet53-tiny-b.ppm'>
+
+ 
 
 Neck：SPP，PAN
+
+<img src ='https://img2020.cnblogs.com/blog/1363478/202008/1363478-20200804204355372-1292572649.webp'>
+
+
 
 Head：YOLOv3
 
@@ -389,10 +405,10 @@ Head：YOLOv3
 >
 >YOLO v4 uses: 
 >
->- Bag of Freebies (BoF) for backbone: CutMix and Mosaic data augmentation, DropBlock regularization, Class label smoothing 
->- Bag of Specials (BoS) for backbone: Mish activation, Cross-stage partial connections (CSP), Multiinput weighted residual connections (MiWRC) 
->-  Bag of Freebies (BoF) for detector: CIoU-loss, CmBN, DropBlock regularization, Mosaic data augmentation, Self-Adversarial Training, Eliminate grid sensitivity, Using multiple anchors for a single ground truth, Cosine annealing scheduler [52], Optimal hyperparameters, Random training shapes 
->- Bag of Specials (BoS) for detector: Mish activation, SPP-block, SAM-block, PAN path-aggregation block, DIoU-NMS
+>- Bag of Freebies (BoF) for <u>backbone:</u> CutMix and Mosaic data augmentation, DropBlock regularization, Class label smoothing 
+>- Bag of Specials (BoS) for <u>backbone</u>: Mish activation, Cross-stage partial connections (CSP), Multiinput weighted residual connections (MiWRC) 
+>-  Bag of Freebies (BoF) for <u>detector</u>: CIoU-loss, CmBN, DropBlock regularization, Mosaic data augmentation, Self-Adversarial Training, Eliminate grid sensitivity, Using multiple anchors for a single ground truth, Cosine annealing scheduler [52], Optimal hyperparameters, Random training shapes 
+>- Bag of Specials (BoS) for <u>detector</u>: Mish activation, SPP-block, SAM-block, PAN path-aggregation block, DIoU-NMS
 
 
 

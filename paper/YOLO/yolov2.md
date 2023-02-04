@@ -220,7 +220,7 @@ We train the network on the standard ImageNet 1000 class classification dataset 
 
 We propose a mechanism for jointly training on classification and detection data. 
 
-我們提出了一種聯合訓練分類和檢測數據的機制。
+我們提出了一種<u>聯合訓練分類和檢測數據</u>的機制。
 
 
 
@@ -235,6 +235,8 @@ During training we mix images from both detection and classification datasets. <
 
 
 This approach presents a few challenges. <u>Detection datasets have only common objects and general labels</u>, like “dog” or “boat”. Classification datasets have a much wider and deeper range of labels. ImageNet has more than a hundred breeds of dog
+
+这种方法带来了一些挑战<u> 检测数据集只有通用对象和通用标签</u>，如“狗”或“船”。分类数据集的标签范围更广、更深。ImageNet有一百多种狗
 
 
 

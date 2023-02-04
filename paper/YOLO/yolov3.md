@@ -42,7 +42,44 @@ From our base feature extractor we add several convolutional layers. The last of
 我們使用一個新的網絡來執行特徵提取。
 我們的新網絡是 YOLOv2、Darknet-19 中使用的網絡和新奇的殘差網絡材料之間的混合方法。
 
+這種模型叫做Darknet53
+
+<img src = 'https://production-media.paperswithcode.com/methods/Screen_Shot_2020-06-24_at_12.53.56_PM_QQoF5AO.png'>
+
+
+
+This new network is much more powerful than Darknet19 but still more efficient than ResNet-101 or ResNet-152
+
+
+
+### Training 訓練
+
+We use multi-scale training,lots of data augmentation,batch normalization,all the standard stuff .
 
 
 
 
+
+## How we do 
+
+pass 
+
+## Things we tried that didn't work 
+
+Here's the stuff we can remember 
+
+- Anchor box:
+
+  anchor box xy offset prediction
+
+- Linear:
+
+  linear xy prediction instead of logistic 
+
+- Focal loss:
+
+- Dual IOU thresholds  and truth assignments
+
+- 
+
+  
