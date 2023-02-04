@@ -6,7 +6,9 @@ we frame object detection <u>**as a regression problem to spatially separated bo
 
 作為空間分離的邊界框和相關概率的回歸問題
 
-## 
+
+
+
 
 ## Introduction
 
@@ -32,7 +34,7 @@ systems take a classifier for that object and **evaluate it at various locations
 
 **we reframe object detection as a single regression problem,straight from pixel to bouding box  coordinates and class probabilities**
 
-我們將目標檢測重新定義為一個單一的回歸問題，直接從像素到邊界框坐標和類別概率
+我們將目標檢測重新定義為一個單一的回歸問<u>題，直接從像素到邊界框坐標和類別概率</u>
 
 
 
@@ -114,7 +116,7 @@ adding both convolutional and connected layers to pretrained networks can improv
 
 
 
-Our final layer predicts both class probabilities and bounding box coordinates,We normalize the bounding box width and height by the image width and height so that they fall between 0 and 1 
+Our final layer predicts both class probabilities and bounding box coordinates,<u>We normalize the bounding box width and height by the image width and height so that they fall between 0 and 1</u> 
 
 归一化边界框
 
@@ -122,7 +124,9 @@ Our final layer predicts both class probabilities and bounding box coordinates,W
 
 在最后一层是用线性激活函数。`leakly relu`
 
-
+> <img src='http://p0.ifengimg.com/pmop/2017/0701/C56E5C6FCBB36E70BA5EBC90CBD142BA320B3DF6_size19_w740_h217.jpeg'>
+>
+> Leaky ReLu 中的`ai`是固定的
 
 we optimize for  *sum-squared-error* in the output of our model
 
@@ -178,7 +182,7 @@ YOLO 預測每個網格單元的多個邊界框。<u>在訓練時，我們只需
 
 ### Inference
 
-the grid design enforces spatial diversity增加空间多样性
+the grid design enforces spatial diversity网格增加空间多样性
 
 
 
@@ -277,5 +281,4 @@ https://www.maskaravivek.com/post/yolov1/
 ```
 
 > 使用google colab运行
-
 

@@ -75,13 +75,17 @@ Instead of predicting coordinates directly Faster R-CNN predicts bounding boxes 
 
  Predicting offsets instead of coordinates simplifies the problem and makes it easier for the network to learn
 
-預測偏差比直接預測坐標簡單，模型也好學習
+<u>預測偏差比直接預測坐標簡單，模型也好學習</u>
 
 
 
 We remove the fully connected layers from YOLO and use anchor boxes to predict bounding boxe
 
 使用錨框預測邊界框
+
+> anchor box:根據預測的形狀來設計的box
+>
+> bouding box:根據預測的分類來設計的box
 
 
 
@@ -97,11 +101,13 @@ When we move to anchor boxes we also decouple the class prediction mechanism fro
 
 We encounter two issues with anchor boxes when using them with YOLO. <u>The first is that the box dimensions are hand picked</u>. The network can learn to adjust the boxes appropriately but if we pick better priors for the network to start with we can make it easier for the network to learn to predict good detections
 
-盒子的維度是先驗的。
+盒子的維度是先驗的。也就是說如果我們一開始選擇的維度是較好的，模型的訓練也會更加順利。
 
 
 
-Instead of choosing priors by hand, we run k-means clustering on the training set bounding boxes to automatically find good priors
+
+
+Instead of choosing priors by hand, we run <u>k-means</u> clustering on the training set bounding boxes to automatically find good priors
 
 我們不是手動選擇先驗，而是在訓練集邊界框上運行 k-means 聚類以自動找到好的先驗
 
@@ -142,13 +148,15 @@ Instead of predicting offsets we follow the approach of YOLO and predict locatio
 
 ### Fine-Grained Features 細粒度特徵
 
-We take a different approach, simply adding a passthrough layer that brings features from an earlier layer at 26 × 26 resolution.
+> passthrough layer
+
+We take a different approach, simply adding a <u>**passthrough layer**</u> that brings features from an earlier layer at 26 × 26 resolution.
 
 添加一個穿透層，以26x26分辨率從從前層中提取特徵。
 
 
 
-The passthrough layer concatenates the higher resolution features with the low resolution features by stacking adjacent features into different channels instead of spatial locations, 穿透層通過將相鄰特徵堆疊到不同的通道，而不是空間位置，將高分辨率特徵與低分辨率特徵連結起來。
+The passthrough layer concatenates the higher resolution features with the low resolution features by stacking adjacent features into different channels instead of spatial locations, 穿透層通過將相鄰特徵堆疊到<u>不同的通道，而不是空間位置</u>，將高分辨率特徵與低分辨率特徵連結起來。
 
 
 
@@ -178,7 +186,9 @@ This regime forces the network to learn to predict well across a variety of inpu
 
 大多數的目標檢測框架核心是VGG16，很準確但是也很複雜和慢
 
-
+> vgg16:
+>
+> <img src = 'https://media.geeksforgeeks.org/wp-content/uploads/20200219152327/conv-layers-vgg16-1024x450.jpg'>
 
 The YOLO framework uses a custom network based on the Googlenet architecture
 
@@ -190,7 +200,9 @@ YOLO使用GoogleNet作為參照，但是少了一些準確性
 
 我們最後的模型叫做darknet-19，訓練參數進一步減少
 
-
+> Darknet19:
+>
+> <img src ='https://production-media.paperswithcode.com/methods/Screen_Shot_2020-06-24_at_12.38.12_PM.png'>
 
 
 
