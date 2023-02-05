@@ -139,7 +139,8 @@ def load_weights(var_list,weights_file):
 	while i<len(var_list):
 		var1 = var_list[i]
 		var2 = var_list[i+1]
-		# 
+		# 2.4 to be continue 
+		
 
 _BATCH_NORM_DECAY = 0.9 
 _BATCH_NORM_EPSILON =1e-5 
