@@ -76,9 +76,9 @@
 
   >.csv格式識別
 
+- [GAN繪圖](https://github.com/danyow-cheung/kaggle_practise/tree/main/gan_arts)
+
   
-
-
 
 ## Image Classification 
 
@@ -97,8 +97,10 @@
 ## Image Recognition
 
 - [地形图片分类](https://github.com/danyow-cheung/kaggle_practise/tree/main/landscape)
-- 
-- 
+
+
+
+
 
 ### 练习目标
 
@@ -113,15 +115,15 @@
 - [Xception✅](https://github.com/danyow-cheung/kaggle_practise/tree/main/paper/Xception)
 - [AlexNet✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/AlexNet)
 - [VGG16✅](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/VGG16)
-- VGG19
+- ~~VGG19~~
 - [ResNet50✅]((https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/ResNet))
 - [ResNet50v2](((https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/ResNet))
-- ResNet101 
-- ResNet152 
-- ResNet152V2
-- InceptionV3
+- ~~ResNet101~~ 
+- ~~ResNet152~~ 
+- ~~ResNet152V2~~
+- [InceptionV3](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/Inception)
 - InceptionResNetV2
-- MobileNet
+- [MobileNet]((https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/MobileNet))
 - MobileNet
 - [YOLO](https://github.com/danyow-cheung/kaggle_practise/blob/main/paper/YOLO)
 
